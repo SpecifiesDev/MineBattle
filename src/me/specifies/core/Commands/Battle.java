@@ -3,16 +3,22 @@ package me.specifies.core.Commands;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import me.specifies.core.MineBattle;
 
@@ -86,6 +92,30 @@ public class Battle implements CommandExecutor{
 							p.sendMessage(plugin.color(plugin.prefix + " &cIt appears that you are not permitted to use this commmand."));
 						}
 					}//time
+					if(args[0].equalsIgnoreCase("help")) {
+						if(p.hasPermission("minebattles.help")) {
+							p.sendMessage(plugin.color("&8&m--------------&7" + plugin.prefix + "&7&8&m--------------"));
+							p.sendMessage(plugin.color("&c&l/minebattle enter&7&l:"));
+							p.sendMessage(plugin.color("&bEnter a battle if one is occuring."));
+							p.sendMessage(plugin.color("&c&l/minebattle leave&7&l:"));
+							p.sendMessage(plugin.color("&bLeave a battle if you are in one."));
+							p.sendMessage(plugin.color("&c&l/minebattle setspawn&7&l:"));
+							p.sendMessage(plugin.color("&bSet the start point of a battle."));
+							p.sendMessage(plugin.color("&c&l/minebattle setendpoint&7&l:"));
+							p.sendMessage(plugin.color("&bSet the end point of a battle."));
+							p.sendMessage(plugin.color("&c&l/minebattle stats&7&l:"));
+							p.sendMessage(plugin.color("&bView your stats."));
+							p.sendMessage(plugin.color("&c&l/minebattle time&7&l:"));
+							p.sendMessage(plugin.color("&bView the remaining time of an ongoing battle."));
+							p.sendMessage(plugin.color("&c&l/minebattle leaderboard&7&l:"));
+							p.sendMessage(plugin.color("&bView the leaderboard."));
+							p.sendMessage(plugin.color("&c&l/viewstats <player>&7&l:"));
+							p.sendMessage(plugin.color("&bView the stats of a target player."));
+							
+						}else {
+							p.sendMessage(plugin.color(plugin.prefix + " &cIt appears that you are not permitted to use this commmand."));
+						}
+					}
 					if(args[0].equalsIgnoreCase("setendpoint")) {
 						if(p.hasPermission("minebattles.setendpoint")) {
 							File yml = new File(plugin.getDataFolder() + File.separator + "data" + File.separator + "data.yml");
@@ -149,6 +179,20 @@ public class Battle implements CommandExecutor{
 						Location loc = new Location(p.getWorld(), x, y, z);
 						p.teleport(loc);
 					}
+					if(args[0].equalsIgnoreCase("stats")) {
+						if(p.hasPermission("minebattle.stats")) {
+							OfflinePlayer passparam = null;
+							UUID u = p.getUniqueId();
+							File pf = new File(plugin.getDataFolder() + File.separator + "players" + File.separator + u + ".yml");
+							FileConfiguration conf = YamlConfiguration.loadConfiguration(pf);
+							createStats("&7Stats", 27, p, conf, pf, p, false, passparam);
+							
+						}
+					}//stats
+					if(args[0].equalsIgnoreCase("leaderboard")) {
+						File folder = new File(plugin.getDataFolder()+File.separator+"players");
+						plugin.lb.leaderBoard(folder, p);
+					}
 					if(args[0].equalsIgnoreCase("setspawn")) {
 						if(p.hasPermission("minebattles.setspawnpoint")) {
 							File yml = new File(plugin.getDataFolder() + File.separator + "data" + File.separator + "data.yml");
@@ -183,7 +227,7 @@ public class Battle implements CommandExecutor{
 		} else {
 			return m1;
 		}
-	}
+	} 
 	public void endGame() {
 		if(plugin.players.isEmpty()) {
 			
@@ -203,9 +247,100 @@ public class Battle implements CommandExecutor{
 				p.chat("/minebattle leavesilent");
 			}//for
 			plugin.players.clear();
-		}//eld
+		}//else
 	}//end
-	public void createStats() {
+	public void createStats(String prefix, int slots, Player p, FileConfiguration conf, File f, Player head, boolean oPlayer, OfflinePlayer head2) {
+		if(oPlayer == false) {
+		//Basic inv
+		Inventory inv = Bukkit.createInventory(null, slots, plugin.color(prefix));
 		
+		//Variables we will use
+		int deaths = conf.getInt("Deaths");
+		int kills = conf.getInt("Kills");
+		String death = plugin.convert(deaths);
+		String kill = plugin.convert(kills);
+		
+		//blank glass
+		ItemStack glass = new ItemStack(Material.STAINED_GLASS_PANE, 1, (byte) 15);
+		ItemMeta gm = glass.getItemMeta();
+		gm.setDisplayName(plugin.color("&9"));
+		glass.setItemMeta(gm);
+		
+		//sword
+		ItemStack sword = new ItemStack(Material.DIAMOND_SWORD, 1);
+		ItemMeta sm = sword.getItemMeta();
+		sm.setDisplayName(plugin.color("&c&lKills&8: &7" + kill));
+		sword.setItemMeta(sm);
+		
+		//skull
+		ItemStack skull = new ItemStack(Material.SKULL_ITEM, 1, (byte) 3);
+		SkullMeta skm = (SkullMeta) skull.getItemMeta();
+		skm.setDisplayName(plugin.color("&c&lDeaths&8: &7" + death));
+		skm.setOwner(head.getName());
+		skull.setItemMeta(skm);
+		
+		// add items
+		int i;
+		for(i = 0; i < 9; i++) {
+			inv.setItem(i, glass);
+		}
+		inv.setItem(9, glass);
+		inv.setItem(10, glass);
+		inv.setItem(11, glass);
+		inv.setItem(12, sword);
+		inv.setItem(13, glass);
+		inv.setItem(14, skull);
+		int ii;
+		for(ii = 15; ii < 27; ii++) {
+			inv.setItem(ii, glass);
+		}
+		p.openInventory(inv);
+		}
+		if(oPlayer == true) {
+			//Basic inv
+			Inventory inv = Bukkit.createInventory(null, slots, plugin.color(prefix));
+			
+			//Variables we will use
+			int deaths = conf.getInt("Deaths");
+			int kills = conf.getInt("Kills");
+			String death = plugin.convert(deaths);
+			String kill = plugin.convert(kills);
+			
+			//blank glass
+			ItemStack glass = new ItemStack(Material.STAINED_GLASS_PANE, 1, (byte) 15);
+			ItemMeta gm = glass.getItemMeta();
+			gm.setDisplayName(plugin.color("&9"));
+			glass.setItemMeta(gm);
+			
+			//sword
+			ItemStack sword = new ItemStack(Material.DIAMOND_SWORD, 1);
+			ItemMeta sm = sword.getItemMeta();
+			sm.setDisplayName(plugin.color("&c&lKills&8: &7" + kill));
+			sword.setItemMeta(sm);
+			
+			//skull
+			ItemStack skull = new ItemStack(Material.SKULL_ITEM, 1, (byte) 3);
+			SkullMeta skm = (SkullMeta) skull.getItemMeta();
+			skm.setDisplayName(plugin.color("&c&lDeaths&8: &7" + death));
+			skm.setOwner(head2.getName());
+			skull.setItemMeta(skm);
+			
+			// add items
+			int i;
+			for(i = 0; i < 9; i++) {
+				inv.setItem(i, glass);
+			}
+			inv.setItem(9, glass);
+			inv.setItem(10, glass);
+			inv.setItem(11, glass);
+			inv.setItem(12, sword);
+			inv.setItem(13, glass);
+			inv.setItem(14, skull);
+			int ii;
+			for(ii = 15; ii < 27; ii++) {
+				inv.setItem(ii, glass);
+			}
+			p.openInventory(inv);
+		}
 	}
 }

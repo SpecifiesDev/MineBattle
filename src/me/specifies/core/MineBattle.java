@@ -12,16 +12,21 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import me.specifies.core.Commands.Battle;
+import me.specifies.core.Commands.ViewStats;
 import me.specifies.core.Events.BlockCommands;
 import me.specifies.core.Events.FirstJoin;
 import me.specifies.core.Events.Kills;
+import me.specifies.core.Events.LeadBoards;
 import me.specifies.core.Events.PreventState;
+import me.specifies.core.Events.Stats;
 import me.specifies.core.Events.TeleportIfDisc;
+import me.specifies.core.Management.Leaderboard;
 import net.md_5.bungee.api.ChatColor;
 
 public class MineBattle extends JavaPlugin{
 	//Instance
-	Battle ba = new Battle(this);
+	public Battle ba = new Battle(this);
+	public Leaderboard lb = new Leaderboard(this);
 	
 	//prefix
 	public String prefix = "&7[&3Mine&8Battles&7]";
@@ -56,20 +61,18 @@ public class MineBattle extends JavaPlugin{
 	
 	public void registerCommands() {
 		getCommand("minebattle").setExecutor(new Battle(this));
+		getCommand("viewstats").setExecutor(new ViewStats(this));
 	}
 	
 	public void registerEvents() {
 		PluginManager pm = Bukkit.getPluginManager();
-		/*
-		 * I was thinking I could do this in
-		 * 2 events, one to create files, another
-		 * to block command state.
-		 */
 		pm.registerEvents(new FirstJoin(this), this);
 		pm.registerEvents(new BlockCommands(this), this);
 		pm.registerEvents(new Kills(this), this);
 		pm.registerEvents(new PreventState(this), this);
 		pm.registerEvents(new TeleportIfDisc(this), this);
+		pm.registerEvents(new Stats(this), this);
+		pm.registerEvents(new LeadBoards(this), this);
 	}
 	
 	public void createDefFile() {
