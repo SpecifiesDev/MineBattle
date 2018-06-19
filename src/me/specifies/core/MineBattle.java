@@ -12,6 +12,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import me.specifies.core.Commands.Battle;
+import me.specifies.core.Commands.ClearStats;
+import me.specifies.core.Commands.EditStats;
 import me.specifies.core.Commands.ViewStats;
 import me.specifies.core.Events.BlockCommands;
 import me.specifies.core.Events.FirstJoin;
@@ -62,6 +64,8 @@ public class MineBattle extends JavaPlugin{
 	public void registerCommands() {
 		getCommand("minebattle").setExecutor(new Battle(this));
 		getCommand("viewstats").setExecutor(new ViewStats(this));
+		getCommand("mbeditstats").setExecutor(new EditStats(this));
+		getCommand("mbclearstats").setExecutor(new ClearStats(this));
 	}
 	
 	public void registerEvents() {

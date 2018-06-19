@@ -26,7 +26,7 @@ public class ViewStats implements CommandExecutor{
 				sender.sendMessage(plugin.color(plugin.prefix + " &cYou must be a player to use this command"));
 			} else {
 				Player p = (Player) sender;
-				if(p.hasPermission("minebattle.viewstats")) {
+				if(p.hasPermission("minebattles.viewstats")) {
 				if(args.length == 1) {
 					String playername = args[0];
 					OfflinePlayer player = Bukkit.getOfflinePlayer(playername);

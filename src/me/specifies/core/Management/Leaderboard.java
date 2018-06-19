@@ -41,7 +41,6 @@ public class Leaderboard {
 				String us = child.getName();
 				String[] uuids = us.split(".yml");
 				String usf = uuids[0];
-				System.out.println(usf);
 				UUID u = UUID.fromString(usf);
 				
 				player = Bukkit.getOfflinePlayer(u);

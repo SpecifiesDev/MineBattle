@@ -109,6 +109,8 @@ public class Battle implements CommandExecutor{
 							p.sendMessage(plugin.color("&bView the remaining time of an ongoing battle."));
 							p.sendMessage(plugin.color("&c&l/minebattle leaderboard&7&l:"));
 							p.sendMessage(plugin.color("&bView the leaderboard."));
+							p.sendMessage(plugin.color("&c&l/minebattle start&7&l:"));
+							p.sendMessage(plugin.color("&bStart a battle manually."));
 							p.sendMessage(plugin.color("&c&l/viewstats <player>&7&l:"));
 							p.sendMessage(plugin.color("&bView the stats of a target player."));
 							
@@ -180,7 +182,7 @@ public class Battle implements CommandExecutor{
 						p.teleport(loc);
 					}
 					if(args[0].equalsIgnoreCase("stats")) {
-						if(p.hasPermission("minebattle.stats")) {
+						if(p.hasPermission("minebattles.stats")) {
 							OfflinePlayer passparam = null;
 							UUID u = p.getUniqueId();
 							File pf = new File(plugin.getDataFolder() + File.separator + "players" + File.separator + u + ".yml");
