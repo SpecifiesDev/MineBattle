@@ -1,2 +1,2 @@
 # MineBattle
-Source for the spigot resource "MineBattles": https://www.spigotmc.org/resources/minebattles-1-8.57892/
+Minebattle was a plugin that I wrote with the intent to create a unique prison experience. 
